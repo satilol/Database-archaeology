@@ -9,10 +9,10 @@ class Finding(Base):
     location = Column(String)
     found_date = Column(Date)
     condition = Column(String)
-    type = Column(String)
+    finding_type = Column(String)
     archaeologist_id = Column(Integer, ForeignKey("archaeologists.id"))
     artifact_id = Column(Integer, ForeignKey("artifacts.id"))
-    metadata = Column(JSONB)
+    extra_data = Column(JSONB)
     
     archaeologist = relationship("Archaeologist")
     artifact = relationship("Artifact")
