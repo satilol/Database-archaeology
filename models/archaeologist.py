@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Index
 from database import Base
 
 class Archaeologist(Base):
@@ -8,3 +8,6 @@ class Archaeologist(Base):
     salary = Column(Integer)
     specialization = Column(String)
     qualification = Column(String)
+    experience_years = Column(Integer, server_default="0")
+    
+    __table_args__ = (Index("idx_arch_name", "full_name"),)
