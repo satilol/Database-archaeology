@@ -9,6 +9,7 @@ from models.archaeologist import Archaeologist
 from models.artifact import Artifact
 from models.finding import Finding
 import schemas
+from sqlalchemy import func
 
 
 Base.metadata.create_all(bind=engine)
@@ -84,3 +85,49 @@ def delete_finding(finding_id: int, db: Session = Depends(get_db)):
         db.delete(obj) 
         db.commit() 
     return {"status": "deleted"}
+
+# SELECT WHERE
+@app.get("/filter/findings")
+def filter_findings(location: str, year: int, db: Session = Depends(get_db)):
+    return db.query(Finding).filter(
+        Finding.location == location,
+        func.extract('year', Finding.found_date) == year
+    ).all()
+    
+# JOIN
+@app.get("/findings/detailed_report")
+def get_detailed_report(db: Session = Depends(get_db)):
+    results = db.query(Finding).join(Archaeologist).join(Artifact).all()
+    return [
+        {
+            "location": f.location,
+            "archaeologist": f.archaeologist.full_name,
+            "artifact": f.artifact.name,
+            "date": f.found_date
+        } for f in results
+    ]
+    
+# UPDATE
+@app.put("/archaeologists/salary_bonus")
+def apply_salary_bonus(specialization: str, bonus_amount: int, db: Session = Depends(get_db)):
+    db.query(Archaeologist).filter(
+        Archaeologist.specialization == specialization
+    ).update(
+        {"salary": Archaeologist.salary + bonus_amount}
+    )
+    db.commit()
+    return {"message": f"Salary updated for {specialization}"}
+
+# GROUP BY
+@app.get("/stats/locations")
+def get_location_stats(db: Session = Depends(get_db)):
+    stats = db.query(
+        Finding.location, 
+        func.count(Finding.id).label("total")
+    ).group_by(Finding.location).all()
+    return {loc: count for loc, count in stats}
+
+# SORT
+@app.get("/artifacts/most_valuable")
+def get_valuable(limit: int = 10, db: Session = Depends(get_db)):
+    return db.query(Artifact).order_by(Artifact.value.desc()).limit(limit).all()
