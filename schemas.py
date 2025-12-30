@@ -42,6 +42,7 @@ class FindingBase(BaseModel):
     finding_type: Optional[str] = None
     archaeologist_id: int
     artifact_id: int
+    extra_data: Optional[dict] = None
 
 class FindingCreate(FindingBase):
     pass

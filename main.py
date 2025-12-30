@@ -131,3 +131,15 @@ def get_location_stats(db: Session = Depends(get_db)):
 @app.get("/artifacts/most_valuable")
 def get_valuable(limit: int = 10, db: Session = Depends(get_db)):
     return db.query(Artifact).order_by(Artifact.value.desc()).limit(limit).all()
+
+
+# JSONB search
+@app.get("/findings/search_regex")
+def search_findings_json_regex(pattern: str, db: Session = Depends(get_db)):
+    from sqlalchemy import cast, String
+    
+    results = db.query(Finding).filter(
+        cast(Finding.extra_data, String).op("~")(pattern)
+    ).all()
+    
+    return results

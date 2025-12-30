@@ -38,17 +38,26 @@ def seed_data():
             
     locations = ["Valley of the Kings", "Pompeii", "Stonehenge", "Machu Picchu"]
     conditions = ["Excellent", "Damaged", "Fragments"]
+    materials = ["Gold", "Silver", "Bronze", "Clay", "Stone"]
     print("Populating findings...")
     for i in range(30):
         random_days = random.randint(1, 365)
         found_date = (date.today() - timedelta(days=random_days)).isoformat()
+        
+        extra_info = {
+            "material": random.choice(materials),
+            "depth_meters": random.randint(1, 15),
+            "is_rare": random.choice([True, False])
+        }
+        
         payload = {
             "location": random.choice(locations),
             "found_date": found_date,
             "condition": random.choice(conditions),
             "finding_type": "Excavation",
             "archaeologist_id": random.choice(arch_ids),
-            "artifact_id": random.choice(art_ids)
+            "artifact_id": random.choice(art_ids),
+            "extra_data": extra_info
         }
         response = requests.post(f"{BASE_URL}/findings", json=payload)
         if response.status_code != 200:
