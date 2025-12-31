@@ -5,7 +5,7 @@ from models.artifact import Artifact
 from models.finding import Finding
 import schemas
 
-# --- Archaeologists ---
+# Archaeologists
 def get_archaeologists(db: Session, limit: int = 10, offset: int = 0):
     return db.query(Archaeologist).offset(offset).limit(limit).all()
 
@@ -35,7 +35,7 @@ def update_salary_bonus(db: Session, specialization: str, bonus_amount: int):
     return {"message": f"Salary updated for {specialization}"}
 
 
-# --- Artifacts ---
+# Artifacts
 def get_artifacts(db: Session, limit: int = 10, offset: int = 0):
     return db.query(Artifact).offset(offset).limit(limit).all()
 
@@ -51,7 +51,7 @@ def get_most_valuable_artifacts(db: Session, limit: int = 10):
     return db.query(Artifact).order_by(Artifact.value.desc()).limit(limit).all()
 
 
-# --- Findings ---
+# Findings
 def get_findings(db: Session, limit: int = 10, offset: int = 0):
     return db.query(Finding).offset(offset).limit(limit).all()
 
